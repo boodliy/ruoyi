@@ -9,6 +9,7 @@ import com.ruoyi.system.domain.SysUserRole;
  * 
  * @author ruoyi
  */
+
 public interface SysUserRoleMapper
 {
     /**

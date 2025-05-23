@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AskapplystatusMapper">
+
+    <resultMap type="Askapplystatus" id="AskapplystatusResult">
+        <result property="askNo"    column="ask_no"    />
+        <result property="qdDate"    column="qd_date"    />
+        <result property="ajName"    column="aj_name"    />
+        <result property="ajQudao"    column="aj_qudao"    />
+        <result property="name"    column="name"    />
+        <result property="phone"    column="phone"    />
+        <result property="qdje"    column="qdje"    />
+        <result property="hqtc"    column="hqtc"    />
+        <result property="ssje"    column="ssje"    />
+        <result property="status"    column="status"    />
+        <result property="taUser"    column="ta_user"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="bz"    column="bz"    />
+        <result property="gjsj"    column="gjsj"    />
+        <result property="wxtj"    column="wxtj"    />
+        <result property="gjzt"    column="gjzt"    />
+        <result property="ajqk"    column="ajqk"    />
+    </resultMap>
+
+    <sql id="selectAskapplystatusVo">
+        select ask_no, qd_date, aj_name, aj_qudao, name, phone, qdje, hqtc, ssje, status, ta_user, user_id ,bz
+        ,gjsj,gjzt,wxtj,ajqk
+        from askapplystatus
+    </sql>
+
+    <select id="selectAskapplystatusList" parameterType="Askapplystatus" resultMap="AskapplystatusResult"
+            resultType="com.ruoyi.system.domain.Askapplystatus">
+        SELECT
+        a.ask_no,
+        a.qd_date,
+        a.aj_name,
+        a.aj_qudao,
+        a.name,
+        a.phone,
+        a.qdje,
+        a.hqtc,
+        a.ssje,
+        a.status,
+        a.ta_user,
+        a.bz,
+        a.gjsj,
+        a.gjzt,
+        a.wxtj,
+        a.ajqk,
+        b.user_id AS user_id ,
+        b.user_name AS user_name
+        FROM askapplystatus a
+        LEFT JOIN sys_user b ON a.user_id = b.user_id
+                <where>
+            <if test="qdDate != null "> and a.qd_date = #{qdDate}</if>
+            <if test="ajName != null  and ajName != ''"> and a.aj_name like concat('%', #{ajName}, '%')</if>
+            <if test="ajQudao != null  and ajQudao != ''"> and a.aj_qudao = #{ajQudao}</if>
+            <if test="name != null  and name != ''"> and name like a.concat('%', #{name}, '%')</if>
+            <if test="phone != null  and phone != ''"> and a.phone = #{phone}</if>
+            <if test="qdje != null  and qdje != ''"> and a.qdje = #{qdje}</if>
+            <if test="hqtc != null  and hqtc != ''"> and a.hqtc = #{hqtc}</if>
+            <if test="ssje != null  and ssje != ''"> and a.ssje = #{ssje}</if>
+            <if test="status != null  and status != ''"> and a.status = #{status}</if>
+            <if test="taUser != null  and taUser != ''"> and a.ta_user = #{taUser}</if>
+            <if test="taUser != null  and taUser != ''"> and a.ta_user = #{taUser}</if>
+            <if test="userId != null  and userId != ''"> and (a.user_id = #{userId} or a.user_id is NULL)</if>
+            and a.del_flag = '0'
+
+        </where>
+    </select>
+    
+    <select id="selectAskapplystatusByAskNo" parameterType="string" resultMap="AskapplystatusResult"
+            resultType="com.ruoyi.system.domain.Askapplystatus">
+        SELECT
+            a.ask_no,
+            a.qd_date,
+            a.aj_name,
+            a.aj_qudao,
+            a.name,
+            a.phone,
+            a.qdje,
+            a.hqtc,
+            a.ssje,
+            a.status,
+            a.ta_user,
+            a.bz,
+            a.gjsj,
+            a.gjzt,
+            a.wxtj,
+            a.ajqk,
+            b.user_id AS user_id,
+            b.user_name AS user_name
+        FROM askapplystatus a
+                 LEFT JOIN sys_user b ON a.user_id = b.user_id
+        where a.ask_no = #{askNo}
+        and a.del_flag = '0'
+    </select>
+
+    <insert id="insertAskapplystatus" parameterType="Askapplystatus">
+        insert into askapplystatus
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="askNo != null">ask_no,</if>
+            <if test="qdDate != null">qd_date,</if>
+            <if test="ajName != null">aj_name,</if>
+            <if test="ajQudao != null">aj_qudao,</if>
+            <if test="name != null">name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="qdje != null">qdje,</if>
+            <if test="hqtc != null">hqtc,</if>
+            <if test="ssje != null">ssje,</if>
+            <if test="status != null">status,</if>
+            <if test="taUser != null">ta_user,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="bz != null">bz,</if>
+            <if test="gjsj != null">gjsj,</if>
+            <if test="wxtj != null">wxtj,</if>
+            <if test="gjzt != null">gjzt,</if>
+            <if test="ajqk != null">ajqk,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="askNo != null">#{askNo},</if>
+            <if test="qdDate != null">#{qdDate},</if>
+            <if test="ajName != null">#{ajName},</if>
+            <if test="ajQudao != null">#{ajQudao},</if>
+            <if test="name != null">#{name},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="qdje != null">#{qdje},</if>
+            <if test="hqtc != null">#{hqtc},</if>
+            <if test="ssje != null">#{ssje},</if>
+            <if test="status != null">#{status},</if>
+            <if test="taUser != null">#{taUser},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="bz != null">#{bz},</if>
+            <if test="gjsj != null">#{gjsj},</if>
+            <if test="wxtj != null">#{wxtj},</if>
+            <if test="gjzt != null">#{gjzt},</if>
+            <if test="ajqk != null">#{ajqk},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAskapplystatus" parameterType="Askapplystatus">
+        update askapplystatus
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qdDate != null">qd_date = #{qdDate},</if>
+            <if test="ajName != null">aj_name = #{ajName},</if>
+            <if test="ajQudao != null">aj_qudao = #{ajQudao},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="qdje != null">qdje = #{qdje},</if>
+            <if test="hqtc != null">hqtc = #{hqtc},</if>
+            <if test="ssje != null">ssje = #{ssje},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="taUser != null">ta_user = #{taUser},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="gjsj != null">gjsj = #{gjsj},</if>
+            <if test="gjzt != null">gjzt = #{gjzt},</if>
+            <if test="wxtj != null">wxtj = #{wxtj},</if>
+            <if test="ajqk != null">ajqk = #{ajqk},</if>
+            <if test="bz != null">bz = #{bz},</if>
+        </trim>
+        where ask_no = #{askNo}
+    </update>
+
+    <delete id="deleteAskapplystatusByAskNo" parameterType="string">
+        update askapplystatus set del_flag = '1'  where ask_no = #{askNo}
+    </delete>
+
+    <delete id="deleteAskapplystatusByAskNos" parameterType="String">
+        update askapplystatus set del_flag = '1' where ask_no in
+        <foreach item="askNo" collection="array" open="(" separator="," close=")">
+            #{askNo}
+        </foreach>
+    </delete>
+</mapper>
