@@ -9,6 +9,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.Askapplystatus;
 import com.ruoyi.system.domain.AskapplystatusVo;
+import com.ruoyi.system.domain.BatchUpdateUserDTO;
 import com.ruoyi.system.service.IAskapplystatusService;
 import com.ruoyi.system.service.ISysUserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +48,7 @@ public class AskapplystatusController extends BaseController
         String username = getUsername();
         Long userId = getUserId();
         logger.info("登录人user为："+username+"用户userid 为"+userId);
-        if (!"admin".equals(username)){
+        if (1!=userId){
             askapplystatus.setUserId(userId+"");
             // 是管理员那么查询所有的订单
         }
@@ -89,7 +91,7 @@ public class AskapplystatusController extends BaseController
     {
         String username = getUsername();
         Long userId = getUserId();
-        if (!"admin".equals(username)){
+        if (1!=userId){
             askapplystatus.setUserId(userId+"");
             askapplystatus.setUserName(username);
             // 是管理员那么查询所有的订单
@@ -131,4 +133,36 @@ public class AskapplystatusController extends BaseController
     {
         return toAjax(askapplystatusService.deleteAskapplystatusByAskNos(askNos));
     }
+
+    @Log(title = "用户管理", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<AskapplystatusVo> util = new ExcelUtil<AskapplystatusVo>(AskapplystatusVo.class);
+        List<AskapplystatusVo> askapplystatusVoList = util.importExcel(file.getInputStream());
+        String message =   askapplystatusService.importData(askapplystatusVoList);
+
+        return AjaxResult.success(message);
+    }
+    @PostMapping("/batchUpdateUser")
+    public AjaxResult batchUpdateUser(@RequestBody BatchUpdateUserDTO batchUpdateUserDTO) {
+        String userid = batchUpdateUserDTO.getUserid();
+        List<String> asknos = batchUpdateUserDTO.getAskno();
+        if (StringUtils.isEmpty(userid)){
+          return AjaxResult.error("未选中用户");
+        }
+        if ( !userid.matches("\\d+")) {
+            throw new IllegalArgumentException("userId不是纯数字");
+        }
+        SysUser     sysUser = iSysUserService.selectUserById(Long.valueOf(userid));
+
+        int rows = askapplystatusService.updateBatchUserInfo(asknos,userid,sysUser.getUserName());
+        return rows > 0 ? AjaxResult.success("批量更新成功") : AjaxResult.error("未更新任何记录");
+    }
+    @GetMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response) {
+        ExcelUtil<Askapplystatus> util = new ExcelUtil<>(Askapplystatus.class);
+        util.importTemplateExcel(response, "用户数据");
+    }
+
 }

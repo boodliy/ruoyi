@@ -1,9 +1,12 @@
 package com.ruoyi.system.service.impl;
 
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.system.domain.Askapplystatus;
 import com.ruoyi.system.domain.AskapplystatusVo;
 import com.ruoyi.system.mapper.AskapplystatusMapper;
 import com.ruoyi.system.service.IAskapplystatusService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,7 @@ import java.util.UUID;
  * @date 2025-05-16
  */
 @Service
+@Slf4j
 public class AskapplystatusServiceImpl implements IAskapplystatusService 
 {
     @Autowired
@@ -98,7 +102,53 @@ public class AskapplystatusServiceImpl implements IAskapplystatusService
         return askapplystatusMapper.deleteAskapplystatusByAskNo(askNo);
     }
 
-    public static void main(String[] args) {
+    @Override
+    public String  importData(List<AskapplystatusVo> askapplystatusVoList) {
+        if (CollectionUtils.isEmpty(askapplystatusVoList))
+        {
+            throw new ServiceException("导入数据不能为空！");
+        }
+        int successNum = 0;
+        int failureNum = 0;
+        StringBuilder successMsg = new StringBuilder();
+        StringBuilder failureMsg = new StringBuilder();
+        int rowNum = 1;
+        for (AskapplystatusVo askapplystatusVo : askapplystatusVoList)
+        {
+            try
+            {
+//                BeanValidators.validateWithException(validator, askapplystatusVo);
+                this.insertAskapplystatus(askapplystatusVo);
+                successNum++;
+                successMsg.append("<br/>第 ").append(successNum).append(" 条导入成功");
 
+            }
+            catch (Exception e)
+            {
+                failureNum++;
+                String msg = "<br/>" + failureNum + " 导入失败：";
+                failureMsg.append("<br/>第 ").append(rowNum).append(" 行导入失败：").append(e.getMessage());
+                log.error(msg, e);
+            }
+            rowNum++;
+        }
+        if (failureNum > 0)
+        {
+            failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确，错误如下：");
+            throw new ServiceException(failureMsg.toString());
+        }
+        else
+        {
+            successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
+        }
+        return successMsg.toString();
     }
+
+    @Override
+    public int updateBatchUserInfo(List<String > list ,String userId,String userName) {
+        int i = askapplystatusMapper.updateBatchUserInfo(list, userId, userName);
+        return i;
+    }
+
+
 }

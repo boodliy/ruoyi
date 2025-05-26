@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import com.ruoyi.system.domain.Askapplystatus;
 import com.ruoyi.system.domain.AskapplystatusVo;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -62,4 +63,13 @@ public interface AskapplystatusMapper
      * @return 结果
      */
     public int deleteAskapplystatusByAskNos(String [] askNos);
+
+    /**
+     * 批量修改用户
+     * @param list
+     * @return
+     */
+    int updateBatchUserInfo(@Param("list") List<String> list, @Param("userId") String userId,@Param("userName")String userName);
+
+
 }

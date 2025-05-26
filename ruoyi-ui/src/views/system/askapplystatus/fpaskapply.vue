@@ -33,7 +33,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-        <el-form-item label="签单状态" prop="status">
+        <!-- <el-form-item label="签单状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择签单状态">
           <el-option
             v-for="item in statusList"
@@ -42,11 +42,19 @@
             :value="item.value">
           </el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="探案律师" prop="taUser">
         <el-input
           v-model="queryParams.taUser"
           placeholder="请输入探案律师"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+             <el-form-item label="手机号" prop="phone">
+        <el-input
+          v-model="queryParams.phone"
+          placeholder="请输入手机号"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -120,10 +128,51 @@
           v-hasPermi="['system:fpaskapplystatus:export']"
         >导出</el-button>
       </el-col>
+            <el-col :span="1.5">
+        <el-button
+          type="info"
+          icon="el-icon-upload2"
+          size="mini"
+          @click="handleImport"
+          v-hasPermi="['system:fpaskapplystatus:import']"
+        >导入</el-button>
+      </el-col>
+
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
+      <!-- 用户导入对话框 -->
+      <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px">
+        <el-upload
+        ref="upload"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+        >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将文件拖到此处，或
+          <em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">
+          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+          <el-link type="info" style="font-size:12px" @click="importTemplate">下载模板</el-link>
+        </div>
+        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+        </el-upload>
+        <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+        </div>
+      </el-dialog>
 
     <el-table v-loading="loading" :data="askapplystatusList" @selection-change="handleSelectionChange">
+      
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="签单流水号" align="center" prop="askNo" /> -->
       <el-table-column label="签单日期" align="center" prop="qdDate" width="180">
@@ -147,8 +196,8 @@
       <el-table-column label="跟进状态" align="center" prop="gjzt" :formatter="formatGjzt" />
       <el-table-column label="案件情况" align="center" prop="ajqk" />
       <el-table-column label="当前处理用户" align="center" prop="userName" />
-      <el-table-column label="订单状态" align="center" prop="status">
-      <template #default="scope">
+      <!-- <el-table-column label="订单状态" align="center" prop="status"> -->
+      <!-- <template #default="scope">
         <el-tag
           :type="getTagType(scope.row.status)"
           effect="plain"
@@ -156,7 +205,7 @@
           {{ getStatusLabel(scope.row.status) }}
         </el-tag>
       </template>
-    </el-table-column>
+    </el-table-column> -->
       <!-- <el-table-column label="探案律师" align="center" prop="taUser" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -177,7 +226,37 @@
         </template>
       </el-table-column>
     </el-table>
-    
+    <el-dialog
+  title="批量分配用户"
+  :visible.sync="assignDialogVisible"
+  width="400px"
+>
+  <el-form>
+    <el-form-item label="分配用户" required>
+      <el-select v-model="assignUserId" placeholder="请选择用户" filterable remote reserve-keyword :remote-method="getUserList" :loading="userLoading">
+        <el-option
+          v-for="user in userOptions"
+          :key="user.userId"
+          :label="user.userName"
+          :value="user.userId"
+        />
+      </el-select>
+    </el-form-item>
+  </el-form>
+
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="assignDialogVisible = false">取消</el-button>
+    <el-button type="primary" @click="submitAssign">确定</el-button>
+  </span>
+</el-dialog>
+<el-button
+  type="primary"
+  icon="el-icon-user"
+  size="mini"
+  @click="openAssignDialog"
+>
+  批量分配用户
+</el-button>
     <pagination
       v-show="total>0"
       :total="total"
@@ -215,7 +294,7 @@
         <el-form-item label="案件渠道" prop="ajQudao">
           <el-input v-model="form.ajQudao" placeholder="请输入案件渠道" />
         </el-form-item>
-        <el-form-item label="签单状态" prop="status">
+        <!-- <el-form-item label="签单状态" prop="status">
         <el-select v-model="form.status" placeholder="请选择签单状态" clearable>
           <el-option
             v-for="item in statusList2"
@@ -224,7 +303,7 @@
             :value="item.value"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name" placeholder="请输入姓名" />
         </el-form-item>
@@ -264,8 +343,13 @@
             />
           </el-select>
         </el-form-item>
-          <el-form-item label="案件情况" prop="ajqk">
-          <el-input v-model="form.ajqk" placeholder="请输入案件情况" />
+       <el-form-item label="案件情况" prop="ajqk">
+          <el-input
+            type="textarea"
+            v-model="form.ajqk"
+            :rows="4"  
+            placeholder="请输入案件情况"
+          />
         </el-form-item>
         <el-form-item label="处理用户" prop="userId">
           <el-select
@@ -300,8 +384,9 @@
 </template>
 
 <script>
-import { listAskapplystatus, getAskapplystatus, delAskapplystatus, addAskapplystatus, updateAskapplystatus } from "@/api/system/askapplystatus"
+import { assignUserBatch,listAskapplystatus, getAskapplystatus, delAskapplystatus, addAskapplystatus, updateAskapplystatus ,importTemplate } from "@/api/system/askapplystatus"
 import{listUser} from "@/api/system/user"
+import { getToken } from "@/utils/auth";
 export default {
   name: "Askapplystatus",
   data() {
@@ -406,6 +491,24 @@ export default {
       userLoading: false,   // 加载状态
       // 表单参数
       form: {},
+      // 用户导入参数
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/system/askapplystatus/importData"
+      },
+      selectedRows: [],  // 保存选中的行数据
+      assignDialogVisible: false,
+       assignUserId: null,  // 分配的用户ID
       // 表单校验
       rules: {
       }
@@ -416,6 +519,79 @@ export default {
     this.getUserList("")
   },
   methods: {
+      handleSelectionChange(val) {
+          this.selectedRows = val;
+        },
+        openAssignDialog() {
+          if (this.selectedRows.length === 0) {
+            this.$message.warning("请先选择至少一条记录");
+            return;
+          }
+          this.assignDialogVisible = true;
+        },
+        submitAssign() {
+          if (!this.assignUserId) {
+            this.$message.warning("请选择要分配的用户");
+            return;
+          }
+          console.log("this.assignUserId",this.assignUserId);
+          
+          // 组装选中行的ID列表
+          const ids = this.selectedRows.map(row => row.id || row.askNo); // 这里id字段根据你的数据调整
+
+          // 调接口批量分配用户，示例接口名 assignUserBatch(ids, assignUserId)
+          assignUserBatch(ids, this.assignUserId).then(() => {
+            this.$message.success("分配成功");
+            this.assignDialogVisible = false;
+            this.getList(); // 刷新表格
+            this.selectedRows = []; // 清空选择
+            this.assignUserId = null;
+          }).catch(err => {
+            this.$message.error("分配失败：" + err.message);
+          });
+        },
+      /** 导入按钮操作 */
+      handleImport() {
+        this.upload.title = "用户导入";
+        this.upload.open = true;
+      },
+          /** 下载模板操作 */
+          importTemplate() {
+            // this.download('/system/askapplystatus/importTemplate', {
+            // }, `user_template_${new Date().getTime()}.xlsx`)
+           // 调用接口，获取返回数据
+                importTemplate().then(res => {
+                  // 创建blob对象
+                  const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+                  const url = window.URL.createObjectURL(blob)
+                  const link = document.createElement('a')
+                  link.href = url
+                  link.setAttribute('download', `导入模板下载${Date.now()}.xlsx`)
+                  document.body.appendChild(link)
+                  link.click()
+                  document.body.removeChild(link)
+                  window.URL.revokeObjectURL(url)
+                }).catch(err => {
+                  console.error('下载失败', err)
+                })
+
+          },
+      // 文件上传中处理
+      handleFileUploadProgress(event, file, fileList) {
+        this.upload.isUploading = true;
+      },
+      // 文件上传成功处理
+      handleFileSuccess(response, file, fileList) {
+        this.upload.open = false;
+        this.upload.isUploading = false;
+        this.$refs.upload.clearFiles();
+        this.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+        this.getList();
+      },
+      // 提交上传文件
+      submitFileForm() {
+        this.$refs.upload.submit();
+      },
 
   formatWxtj(row) {
     const mapping = { '1': '是', '2': '否' };
@@ -513,11 +689,11 @@ export default {
       this.handleQuery()
     },
     // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.askNo)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
-    },
+    // handleSelectionChange(selection) {
+    //   this.ids = selection.map(item => item.askNo)
+    //   this.single = selection.length!==1
+    //   this.multiple = !selection.length
+    // },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset()

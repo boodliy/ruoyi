@@ -60,4 +60,8 @@ public interface IAskapplystatusService
      * @return 结果
      */
     public int deleteAskapplystatusByAskNo(String  askNo);
+
+    String  importData(List<AskapplystatusVo> askapplystatusVoList);
+    int updateBatchUserInfo(List<String > list ,String userId,String userName );
+
 }

@@ -33,7 +33,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-        <el-form-item label="签单状态" prop="status">
+         <el-form-item label="手机号" prop="phone">
+        <el-input
+          v-model="queryParams.phone"
+          placeholder="请输入手机号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+        <!-- <el-form-item label="签单状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择签单状态">
           <el-option
             v-for="item in statusList"
@@ -42,7 +50,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="探案律师" prop="taUser">
         <el-input
           v-model="queryParams.taUser"
@@ -76,7 +84,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:askapplystatus:edit']"
+          v-hasPermi="['system:askapplystatus:query']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -120,10 +128,10 @@
       <el-table-column label="案件渠道" align="center" prop="ajQudao" />
       <el-table-column label="姓名" align="center" prop="name" />
       <el-table-column label="手机号" align="center" prop="phone" />
-      <el-table-column label="微信添加" align="center" prop="wxtj" />
      <el-table-column label="微信添加" align="center" prop="wxtj" :formatter="formatWxtj" />
       <el-table-column label="跟进状态" align="center" prop="gjzt" :formatter="formatGjzt" />
-      
+            <el-table-column label="案件情况" align="center" prop="ajqk" />
+
       <!-- <el-table-column label="签单金额" align="center" prop="qdje" /> -->
       <!-- <el-table-column label="后期提成" align="center" prop="hqtc" />
       <el-table-column label="实收金额" align="center" prop="ssje" />
@@ -145,7 +153,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:askapplystatus:edit']"
+            v-hasPermi="['system:askapplystatus:query']"
           >修改</el-button>
           <el-button
             size="mini"
@@ -195,7 +203,7 @@
         <el-form-item label="案件渠道" prop="ajQudao">
           <el-input v-model="form.ajQudao" placeholder="请输入案件渠道" />
         </el-form-item>
-        <el-form-item label="签单状态" prop="status">
+        <!-- <el-form-item label="签单状态" prop="status">
         <el-select v-model="form.status" placeholder="请选择签单状态" clearable>
           <el-option
             v-for="item in statusList2"
@@ -204,7 +212,7 @@
             :value="item.value"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name" placeholder="请输入姓名" />
         </el-form-item>
@@ -232,8 +240,13 @@
             />
           </el-select>
         </el-form-item>
-          <el-form-item label="案件情况" prop="ajqk">
-          <el-input v-model="form.ajqk" placeholder="请输入案件情况" />
+        <el-form-item label="案件情况" prop="ajqk">
+          <el-input
+            type="textarea"
+            v-model="form.ajqk"
+            :rows="4"  
+            placeholder="请输入案件情况"
+          />
         </el-form-item>
         <!-- <el-form-item label="后期提成" prop="hqtc">
           <el-input v-model="form.hqtc" placeholder="请输入后期提成" />

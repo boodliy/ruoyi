@@ -180,4 +180,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{askNo}
         </foreach>
     </delete>
+    <update id="updateBatchUserInfo"  parameterType="map">
+        UPDATE askapplystatus
+        SET user_id = #{userId},
+         user_name = #{userName}
+        WHERE ask_no IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND del_flag = 0
+    </update>
+
 </mapper>

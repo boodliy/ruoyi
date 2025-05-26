@@ -56,7 +56,7 @@ public class Askapplystatus extends BaseEntity
     private String ssje;
 
     /** 订单状态 */
-    @Excel(name = "订单状态")
+//    @Excel(name = "订单状态", readConverterExp = "1=签单中,2=签单失败,3=签单成功")
     private String status;
 
     /** 探案律师 */
@@ -78,12 +78,12 @@ public class Askapplystatus extends BaseEntity
 
     /** 签单日期 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    @Excel(name = "签单日期", width = 30, dateFormat = "yyyy-MM-dd  HH:mm")
+    @Excel(name = "跟进时间", width = 30, dateFormat = "yyyy-MM-dd  HH:mm")
     private Date gjsj;
-    @Excel(name = "跟进时间")
-    private String  wxtj ;
-    @Excel(name = "跟进状态")
-    private String  gjzt ;
+    @Excel(name = "微信添加", readConverterExp = "1=是,2=否")
+    private String wxtj;
+    @Excel(name = "跟进状态", readConverterExp = "1=未接通,2=跟进中,3=待成交,4=已成交,5=关机/停机,6=空号,7=放弃")
+    private String gjzt;
     @Excel(name = "案件情况")
     private String  ajqk ;
     @Override

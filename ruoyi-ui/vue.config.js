@@ -33,13 +33,13 @@ module.exports = {
     host: '0.0.0.0',
     port: port,
     open: true,
-    proxy: {
-      '/dev-api': {
-        target: 'http://localhost:8080', // 你的 Java 后端
-        changeOrigin: true,
-        pathRewrite: { '^/dev-api': '' } // 去掉前缀，转发给后端
-      }
-    },
+    // proxy: {
+    //   '/dev-api': {
+    //     target: 'http://localhost:8080', // 你的 Java 后端
+    //     changeOrigin: true,
+    //     pathRewrite: { '^/dev-api': '' } // 去掉前缀，转发给后端
+    //   }
+    // },
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {

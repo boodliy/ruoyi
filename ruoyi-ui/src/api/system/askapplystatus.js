@@ -25,6 +25,16 @@ export function addAskapplystatus(data) {
     data: data
   })
 }
+export function assignUserBatch(ids, assignUserId) {
+  return request({
+    url: '/system/askapplystatus/batchUpdateUser',
+    method: 'post',
+    data: {
+      askno: ids,
+      userid: assignUserId
+    }
+  })
+}
 
 // 修改【请填写功能名称】
 export function updateAskapplystatus(data) {
@@ -40,5 +50,12 @@ export function delAskapplystatus(askNo) {
   return request({
     url: '/system/askapplystatus/' + askNo,
     method: 'delete'
+  })
+}
+export function importTemplate() {
+  return request({
+    url: '/system/askapplystatus/importTemplate',
+    method: 'get',
+    responseType: 'blob'   // 关键，告诉 axios 返回二进制流
   })
 }
