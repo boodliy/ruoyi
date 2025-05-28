@@ -1,12 +1,20 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="签单日期" prop="qdDate">
+      <el-form-item label="签单起期" prop="startDate">
         <el-date-picker clearable
-          v-model="queryParams.qdDate"
+          v-model="queryParams.startDate"
           type="date"
           value-format="yyyy-MM-dd"
-          placeholder="请选择签单日期">
+          placeholder="请选择签单起期">
+        </el-date-picker>
+      </el-form-item>
+           <el-form-item label="签单始期" prop="endDate">
+        <el-date-picker clearable
+          v-model="queryParams.endDate"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择签单始期">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="案件姓名" prop="ajName">
@@ -422,7 +430,9 @@ export default {
         hqtc: null,
         ssje: null,
         status: null,
-        taUser: null
+        taUser: null,
+        startDate:null,
+        endDate:null
       },
       statusList:[
         {
@@ -675,6 +685,8 @@ export default {
         taUser: null,
         userId:null,
         userName: null, 
+        startDate:null,
+        endDate:null
       }
       this.resetForm("form")
     },

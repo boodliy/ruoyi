@@ -24,10 +24,10 @@ public interface IAskapplystatusService
     /**
      * 查询【请填写功能名称】列表
      * 
-     * @param askapplystatus 【请填写功能名称】
+     * @param askapplystatusVo 【请填写功能名称】
      * @return 【请填写功能名称】集合
      */
-    public List<AskapplystatusVo> selectAskapplystatusList(Askapplystatus askapplystatus);
+    public List<AskapplystatusVo> selectAskapplystatusList(AskapplystatusVo askapplystatusVo);
 
     /**
      * 新增【请填写功能名称】

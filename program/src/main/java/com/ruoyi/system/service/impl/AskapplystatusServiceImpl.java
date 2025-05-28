@@ -41,13 +41,13 @@ public class AskapplystatusServiceImpl implements IAskapplystatusService
     /**
      * 查询【请填写功能名称】列表
      * 
-     * @param askapplystatus 【请填写功能名称】
+     * @param askapplystatusVo 【请填写功能名称】
      * @return 【请填写功能名称】
      */
     @Override
-    public List<AskapplystatusVo> selectAskapplystatusList(Askapplystatus askapplystatus)
+    public List<AskapplystatusVo> selectAskapplystatusList(AskapplystatusVo askapplystatusVo)
     {
-        List<AskapplystatusVo> askapplystatuses = askapplystatusMapper.selectAskapplystatusList(askapplystatus);
+        List<AskapplystatusVo> askapplystatuses = askapplystatusMapper.selectAskapplystatusList(askapplystatusVo);
         // 判断
         return askapplystatuses;
     }

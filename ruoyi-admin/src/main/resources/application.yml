@@ -36,6 +36,8 @@ logging:
   level:
     com.ruoyi: debug
     org.springframework: warn
+    java.sql: debug
+    org.apache.ibatis: debug
 
 # 用户配置
 user:
@@ -96,7 +98,7 @@ token:
   # 令牌密钥
   secret: abcdefghijklmnopqrstuvwxyz
   # 令牌有效期（默认30分钟）
-  expireTime: 30
+  expireTime: 300
 
 # MyBatis配置
 mybatis:
@@ -106,6 +108,8 @@ mybatis:
   mapperLocations: classpath*:mapper/**/*Mapper.xml
   # 加载全局的配置文件
   configLocation: classpath:mybatis/mybatis-config.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 # PageHelper分页插件
 pagehelper:
   helperDialect: mysql

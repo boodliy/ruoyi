@@ -42,18 +42,18 @@ public class AskapplystatusController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:askapplystatus:list')")
     @GetMapping("/list")
-    public TableDataInfo list(Askapplystatus askapplystatus)
+    public TableDataInfo list(AskapplystatusVo askapplystatusVo)
     {
         // 获取当前登录人姓名
         String username = getUsername();
         Long userId = getUserId();
         logger.info("登录人user为："+username+"用户userid 为"+userId);
         if (1!=userId){
-            askapplystatus.setUserId(userId+"");
+            askapplystatusVo.setUserId2(userId+"");
             // 是管理员那么查询所有的订单
         }
         startPage();
-        List<AskapplystatusVo> list = askapplystatusService.selectAskapplystatusList(askapplystatus);
+        List<AskapplystatusVo> list = askapplystatusService.selectAskapplystatusList(askapplystatusVo);
         return getDataTable(list);
     }
 
@@ -63,7 +63,7 @@ public class AskapplystatusController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:askapplystatus:export')")
     @Log(title = "导出订单功能", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, Askapplystatus askapplystatus)
+    public void export(HttpServletResponse response, AskapplystatusVo askapplystatus)
     {
         List<AskapplystatusVo> list = askapplystatusService.selectAskapplystatusList(askapplystatus);
         ExcelUtil<AskapplystatusVo> util = new ExcelUtil<AskapplystatusVo>(AskapplystatusVo.class);
